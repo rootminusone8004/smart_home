@@ -1,7 +1,7 @@
 # todo list
 
 ## features
-- [] Automatic fan control based on temperature
+- [-] Automatic fan control based on temperature
 - [] Light turns on when motion is detected
 - [] Gas leak alarm with buzzer notification
 - [] Touch-button manual override for devices
