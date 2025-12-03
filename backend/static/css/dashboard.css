@@ -1,0 +1,19 @@
+body {
+    padding-bottom: 40px;
+}
+
+.card h1 {
+    font-weight: 600;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+}
+
+.card {
+    border-radius: 10px;
+}
+
+.alert {
+    border-radius: 10px;
+}

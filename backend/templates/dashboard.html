@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Smart Home Dashboard</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+</head>
+
+<body class="bg-light">
+
+    <nav class="navbar navbar-dark bg-dark mb-4">
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1">Smart Home Dashboard</span>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <div class="row g-4">
+            <!-- Temperature Card -->
+            <div class="col-md-6">
+                <div class="card text-center shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        Temperature
+                    </div>
+                    <div class="card-body">
+                        <h1 id="temp" class="display-4">--</h1>
+                        <p class="text-muted">Celsius</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Humidity Card -->
+            <div class="col-md-6">
+                <div class="card text-center shadow-sm">
+                    <div class="card-header bg-info text-white">
+                        Humidity
+                    </div>
+                    <div class="card-body">
+                        <h1 id="hum" class="display-4">--</h1>
+                        <p class="text-muted">Percentage</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Device Indicator -->
+        <div class="row mt-4">
+            <div class="col">
+                <div class="alert alert-secondary text-center">
+                    Device: <strong id="device">device1</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Relay Controls -->
+        <div class="row g-4 mt-3">
+
+            <!-- Fan Control -->
+            <div class="col-md-6">
+                <div class="card text-center shadow-sm">
+                    <div class="card-header bg-warning text-dark">
+                        Fan Control
+                    </div>
+                    <div class="card-body">
+                        <button class="btn btn-success btn-lg m-2" onclick="setRelay('fan','on')">ON</button>
+                        <button class="btn btn-danger btn-lg m-2" onclick="setRelay('fan','off')">OFF</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Light Control -->
+            <div class="col-md-6">
+                <div class="card text-center shadow-sm">
+                    <div class="card-header bg-secondary text-white">
+                        Light Control
+                    </div>
+                    <div class="card-body">
+                        <button class="btn btn-success btn-lg m-2" onclick="setRelay('light','on')">ON</button>
+                        <button class="btn btn-danger btn-lg m-2" onclick="setRelay('light','off')">OFF</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        // Auto-refresh sensor data
+        async function updateData() {
+            try {
+                const res = await fetch("/sensor");
+                const data = await res.json();
+
+                document.getElementById("temp").textContent =
+                    data.temperature !== null ? data.temperature + "°C" : "--";
+
+                document.getElementById("hum").textContent =
+                    data.humidity !== null ? data.humidity + "%" : "--";
+
+                document.getElementById("device").textContent = data.device;
+
+            } catch (err) {
+                console.log("Failed to update data:", err);
+            }
+        }
+
+        setInterval(updateData, 3000);
+        updateData(); // load immediately
+
+        // Relay control send command
+        async function setRelay(device, state) {
+            try {
+                await fetch(`/relay/${device}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ state })
+                });
+            } catch (err) {
+                console.log("Relay control failed:", err);
+            }
+        }
+    </script>
+
+</body>
+
+</html>
